@@ -1,22 +1,27 @@
 package com.esotiq.esotiq.service;
 
 import com.esotiq.esotiq.model.Product;
+import com.esotiq.esotiq.repo.ProductRepository;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import javax.annotation.PostConstruct;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Scanner;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 @Service
 public class ProductService {
 
-    public List<Product> getAllProducts() {
-        return getAllProductsFromFile();
-    }
+    @Autowired
+    private ProductRepository productRepository;
+
 
     private File file;
     private Scanner scanner;
@@ -28,11 +33,16 @@ public class ProductService {
         getAllProductsFromFile();
     }
 
+    public List<Product> getProducts() {
+        return products;
+    }
+
     public List<Product> getModels() {
         return products;
     }
 
-    private List<Product> getAllProductsFromFile() {
+
+    private void getAllProductsFromFile() {
 
         while (scanner.hasNextLine()) {
             String line = scanner.nextLine();
@@ -109,15 +119,22 @@ public class ProductService {
             modelExample.setQuantity(Integer.valueOf(quantity));
             products.add(modelExample);
         }
-//        System.out.println("Co zostało: " + example);
-//
-//        System.out.println("Wracamy do początku: \n" + line);
-//        example = example.substring(0,example.length()-5);
-//        System.out.println("Example: " + example);
-//        examples = line.split(example);
-//        for (String s : examples) {
-//            System.out.println("==============");
-//            System.out.println(s);
-        return products;
+        saveProductsToDatabase(products);
+    }
+
+    public int saveProductsToDatabase(List<Product> products) {
+        //int size = products.stream().peek(productRepository::save).collect(Collectors.toList()).size();
+        for (Product product : products) {
+            productRepository.save(product);
+        }
+        return products.size();
+    }
+
+    public List<Product> sortProductList(List<Product> products) {
+        return products.stream().sorted(Product::compareTo).collect(Collectors.toList());
+    }
+
+    public List<String> getAllModels() {
+        return productRepository.getAllModels();
     }
 }

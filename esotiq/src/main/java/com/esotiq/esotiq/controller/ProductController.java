@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import javax.annotation.PostConstruct;
 import java.util.List;
 
 @RequestMapping("/esotiq")
@@ -29,9 +30,24 @@ public class ProductController {
 
     @GetMapping("/getAllProduct")
     public String getAllProduct(Model model) {
-        List<Product> productList = productService.getAllProducts();
+        List<Product> productList = productService.getProducts();
+        System.out.println(productList);
         model.addAttribute("productList",productList);
         return "products";
     }
 
+    @ResponseBody
+    @GetMapping("/getAllModels")
+    public List<String> getAllModels(Model model) {
+        return productService.getAllModels();
+    }
+
+
+
+
+  /*  @GetMapping("/getProductByModel")
+    public String getProductByModel(Model model) {
+        Product product = productService.getProductByModel();
+    */
+//}
 }

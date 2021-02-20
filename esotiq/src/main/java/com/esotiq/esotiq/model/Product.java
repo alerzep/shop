@@ -5,10 +5,11 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import java.util.Comparator;
 
 
 @Entity
-public class Product {
+public class Product implements Comparable<Product> {
     @Id
     @GeneratedValue(strategy = GenerationType.TABLE)
     long id;
@@ -87,6 +88,11 @@ public class Product {
                 " cena netto: " + priceNetto + "\n" +
                 " cena brutto: " + priceBrutto + "\n" +
                 " ilość: " + quantity;
+    }
+
+    @Override
+    public int compareTo(Product o) {
+        return -Integer.compare(this.getQuantity(), o.getQuantity());
     }
 }
 
